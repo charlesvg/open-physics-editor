@@ -1,5 +1,5 @@
 {
   "watch": ["public"],
-  "ext": "js,html",
+  "ext": "mjs,js,html",
   "exec": "node index.js"
 }

@@ -1,29 +1,114 @@
-var canvas = document.getElementById("canvas");
-var context = canvas.getContext('2d');
-var image = new Image();
-let loadImage = () => {
+var stage = new Konva.Stage({
+    container: 'container',   // id of container <div>
+    width: 500,
+    height: 500
+});
+
+var layer = new Konva.Layer();
+stage.add(layer);
+
+let loadImage = (url) => {
+    let imageObj = new Image();
+    imageObj.src = url;
     return new Promise((resolve, reject) => {
-        image.onload = function () {
-            context.drawImage(image, 0, 0, canvas.width, canvas.height);
-            resolve();
-        };
-        image.src = "http://www.lunapic.com/editor/premade/transparent.gif";
-    });
+        imageObj.onload  = () => {
+            resolve(imageObj);
+        }
+    })
+}
+let imageObj = await loadImage('http://www.lunapic.com/editor/premade/transparent.gif');
+var yoda = new Konva.Image({
+    x: 50,
+    y: 50,
+    image: imageObj,
+    width: 300,
+    height: 300,
+});
+
+layer.add(yoda);
+
+
+
+var layer = new Konva.Layer();
+
+var text = new Konva.Text({
+    x: 10,
+    y: 10,
+    fontFamily: 'Calibri',
+    fontSize: 24,
+    text: '',
+    fill: 'black',
+});
+
+function writeMessage(message) {
+    text.text(message);
 }
 
-await loadImage();
+stage.on('pointermove', function () {
+    var pointerPos = stage.getPointerPosition();
+    var x = pointerPos.x - 190;
+    var y = pointerPos.y - 40;
+    writeMessage('x: ' + x + ', y: ' + y);
+});
+
+stage.on('pointerdown', function () {
+    addCircle();
+});
+
+let circles = [];
+function addCircle() {
+    let pointerPos = stage.getPointerPosition();
+    let circle = new Konva.Circle({
+        x: pointerPos.x,
+        y: pointerPos.y,
+        radius: 3,
+        fill: 'red',
+        stroke: 'black',
+        strokeWidth: 2,
+        draggable:true
+    });
+    if (circles.length > 0) {
+        let lastCircle = circles[circles.length - 1];
+        var frontLine = new Konva.Line({
+            points: [lastCircle.x(), lastCircle.y(), circle.x(), circle.y()],
+            stroke: 'white',
+            strokeWidth: 1,
+            lineCap: 'round',
+            lineJoin: 'round',
+        });
+
+        var backLine = new Konva.Line({
+            points: [lastCircle.x(), lastCircle.y(), circle.x(), circle.y()],
+            stroke: 'black',
+            strokeWidth: 3,
+            lineCap: 'round',
+            lineJoin: 'round',
+        });
+
+        layer.add(backLine);
+        layer.add(frontLine);
+        layer.draw();
+    }
 
 
 
+    circles.push(circle);
+    layer.add(circle);
+}
 
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const radius = 70;
 
-context.beginPath();
-context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-context.fillStyle = 'green';
-context.fill();
-context.lineWidth = 5;
-context.strokeStyle = '#003300';
-context.stroke();
+layer.add(text);
+
+// add the layer to the stage
+stage.add(layer);
+
+layer.draw();
+
+
+// This fixes konva shapes becoming blurry after a zoom
+window.addEventListener('resize', function () {
+    Konva.pixelRatio = window.devicePixelRatio;
+    // update pixel ratio of existing canvas
+    layer.canvas.setPixelRatio(Konva.pixelRatio);
+    layer.draw();
+})

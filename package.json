@@ -4,8 +4,7 @@
     "mon": "nodemon"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "konva": "^9.3.14"
+    "express": "^4.19.2"
   },
   "devDependencies": {
     "connect-livereload": "^0.6.1",
