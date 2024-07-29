@@ -136,7 +136,9 @@ export async function getVertices(canvas) {
 }
 
 
-
+// See https://stackoverflow.com/questions/56671436/cv-mat-is-not-a-constructor-opencv/63211547#63211547
+// and https://forum.opencv.org/t/opencv-js-built-file-not-working/14866/2
+// and https://docs.opencv.org/4.x/d0/d84/tutorial_js_usage.html
 const openCvScript = document.createElement('script');
 openCvScript.src = './opencv.js';
 openCvScript.async = true;
