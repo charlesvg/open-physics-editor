@@ -118,16 +118,11 @@ let executor = (resolve, reject) => {
     console.log("resolver is", resolver);
 };
 
-let onOpenCvLoad;
-function openCvReady() {
-    onOpenCvLoad();
-}
-
-
+let onOpenCvInitialized;
 
 export async function getVertices(canvas) {
     await new Promise((resolve, reject) => {
-        onOpenCvLoad = () => {
+        onOpenCvInitialized = () => {
             resolve();
         }
     });
@@ -140,7 +135,14 @@ export async function getVertices(canvas) {
     }
 }
 
-window.Module = {
-    onRuntimeInitialized() { openCvReady(); }
-};
 
+
+const openCvScript = document.createElement('script');
+openCvScript.src = './opencv.js';
+openCvScript.async = true;
+openCvScript.onload = () => {
+    cv['onRuntimeInitialized'] = () => {
+        onOpenCvInitialized();
+    }
+}
+document.head.appendChild(openCvScript);
