@@ -117,6 +117,7 @@ window.addEventListener('resize', function () {
 })
 
 let vertices = await opencv.getVertices(layer.getNativeCanvasElement());
+console.log('vertices', vertices);
 for (let vertex of vertices) {
     let circle = new Konva.Circle({
         x: vertex.x,

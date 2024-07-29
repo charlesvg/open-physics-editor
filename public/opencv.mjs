@@ -1,14 +1,14 @@
+const DEBUG_OPENCV = false;
 function createCanvas() {
     let c = document.createElement('canvas');
     let container = document.getElementById('container');
-    c.height = 300;
-    c.width = 300;
+    c.height = 100;
+    c.width = 100;
     container.appendChild(c);
     return c;
 }
 
-function contours(canvas) {
-    let src = cv.imread(canvas);
+function contours(src) {
     let dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
     let contours = new cv.MatVector();
     let hierarchy = new cv.Mat();
@@ -76,8 +76,9 @@ function contours(canvas) {
     // }
 
 
-    cv.imshow(createCanvas(), dst);
-    src.delete();
+    if (DEBUG_OPENCV) {
+        cv.imshow(createCanvas(), dst);
+    }
     dst.delete();
     hierarchy.delete();
     contours.delete();
@@ -97,26 +98,27 @@ function charles(canvas) {
     // Get A channel
     let A = rgbaPlanes.get(3);
     mergedPlanes.push_back(A);
+    mergedPlanes.push_back(A);
+    mergedPlanes.push_back(A);
+    mergedPlanes.push_back(A);
     cv.merge(mergedPlanes, dst);
 
-    let modifiedCanvas = createCanvas();
+    if (DEBUG_OPENCV) {
+        cv.imshow(createCanvas(), dst);
+    }
 
-    cv.imshow(modifiedCanvas, dst);
+    // cv.cvtColor(dst, dst, cv.COLOR_RGBA2GRAY, 0);
+
+    let vertices = contours(dst);
+
 
     // cleanup
     src.delete();
     dst.delete();
     rgbaPlanes.delete();
     mergedPlanes.delete();
-    return modifiedCanvas;
+    return vertices;
 }
-
-let resolver;
-let executor = (resolve, reject) => {
-
-    resolver = resolve;
-    console.log("resolver is", resolver);
-};
 
 let onOpenCvInitialized;
 
@@ -127,8 +129,24 @@ export async function getVertices(canvas) {
         }
     });
     try {
-        let c = charles(canvas);
-        let vertices = contours(c);
+
+        let c = document.createElement('canvas');
+        let container = document.getElementById('container');
+        c.height = canvas.clientHeight;
+        c.width = canvas.clientWidth;
+        c.style.width = canvas.clientWidth + 'px';
+        c.style.height = canvas.clientHeight + 'px';
+        c.style.display = 'none';
+        container.appendChild(c);
+
+        let destCtx = c.getContext('2d');
+        destCtx.drawImage(canvas, 0, 0, canvas.width,canvas.height, 0,0,c.width, c.height);
+
+        let vertices =charles(c);
+        c.remove();
+
+
+
         return vertices;
     } catch (e) {
         console.error(e);
