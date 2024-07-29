@@ -1,12 +1,6 @@
-let input = document.getElementById('fileInput');
-let button = document.getElementById('button');
-let canvas = document.getElementById('mainCanvas');
-let container = document.getElementById('container');
-let image = new Image();
-let inverted = true;
-
 function createCanvas() {
     let c = document.createElement('canvas');
+    let container = document.getElementById('container');
     c.height = 300;
     c.width = 300;
     container.appendChild(c);
@@ -16,7 +10,6 @@ function createCanvas() {
 function contours(canvas) {
     let src = cv.imread(canvas);
     let dst = cv.Mat.zeros(src.rows, src.cols, cv.CV_8UC3);
-    let c = createCanvas();
     let contours = new cv.MatVector();
     let hierarchy = new cv.Mat();
 
@@ -26,7 +19,7 @@ function contours(canvas) {
         src,
         155,
         255,
-        inverted ? cv.THRESH_BINARY_INV : cv.THRESH_BINARY
+        cv.THRESH_BINARY_INV
     );
     cv.findContours(
         src,
@@ -35,19 +28,29 @@ function contours(canvas) {
         cv.RETR_CCOMP,
         cv.CHAIN_APPROX_SIMPLE
     );
-    //for (let i = 0; i < contours.size(); ++i) {
-    //  let color = new cv.Scalar(255, 255, 255);
-    //  cv.drawContours(dst, contours, i, color, 1, cv.LINE_8, hierarchy, 100);
-    //}
+
+    const getVerts = (matVector) => {
+        let vertices = [];
+        // See https://github.com/opencv/opencv/issues/16162 for more info
+        const vectorSize = matVector.size().width * matVector.size().height;
+
+        for (let j = 0; j < vectorSize; j++) {
+            const [x, y] = matVector.intPtr(j);
+            const vertex = { x, y };
+            vertices.push(vertex);
+            // console.log('vertex', vertex);
+        }
+        return vertices;
+    }
 
     let poly = new cv.MatVector();
-    //cv.findContours(src, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
-    // approximates each contour to polygon
+    let vertices = [];
     for (let i = 0; i < contours.size(); ++i) {
         let tmp = new cv.Mat();
         let cnt = contours.get(i);
         // You can try more different parameters
         cv.approxPolyDP(cnt, tmp, 7, true);
+        vertices = vertices.concat(getVerts(tmp));
         poly.push_back(tmp);
         cnt.delete();
         tmp.delete();
@@ -61,107 +64,83 @@ function contours(canvas) {
         );
         cv.drawContours(dst, poly, i, color, 1, 8, hierarchy, 0);
     }
-    for (let i = 0; i < contours.size(); ++i) {
-        let cnt = contours.get(i);
-        let size = cnt.size();
-        const cntSize = cnt.size().width * cnt.size().height;
 
-        for (let j = 0; j < cntSize; j++) {
-            const [x, y] = cnt.intPtr(j); //cnt[j] -> ?
-            const vertex = { x, y };
-            console.log('vertex', vertex);
-            //cv.putText(cnt,'some text', vertex, cv.FONT_HERSHEY_SIMPLEX,1, [255, 0, 255, 255]);
-            //cv.circle(cnt, vertex, 3, [0, 255, 0, 255], cv.FILLED);
-        }
-    }
 
-    cv.imshow(c, dst);
+
+
+
+    // let vertices = [];
+    // for (let i = 0; i < contours.size(); ++i) {
+    //     let cnt = contours.get(i);
+    //     vertices = vertices.concat(getVerts(cnt));
+    // }
+
+
+    cv.imshow(createCanvas(), dst);
     src.delete();
     dst.delete();
     hierarchy.delete();
     contours.delete();
     poly.delete();
 
-    //console.log('contours size:', contours.size());
+    return vertices;
 
-    //cv.imshow(c, dst);
-    //src.delete();
-    //contours.delete();
-    //hierarchy.delete();
-    //dst.delete();
 }
 
-function charles() {
+function charles(canvas) {
     let src = cv.imread(canvas, cv.IMREAD_UNCHANGED);
-    let c = createCanvas();
     let dst = new cv.Mat();
     let rgbaPlanes = new cv.MatVector();
     let mergedPlanes = new cv.MatVector();
     // Split the src
     cv.split(src, rgbaPlanes);
-    // Get G channel
+    // Get A channel
     let A = rgbaPlanes.get(3);
-    // Get B channel
-    //let B = rgbaPlanes.get(2);
-    // Merge G & B channels
-    //mergedPlanes.push_back(G);
     mergedPlanes.push_back(A);
     cv.merge(mergedPlanes, dst);
 
-    cv.imshow(c, dst);
+    let modifiedCanvas = createCanvas();
+
+    cv.imshow(modifiedCanvas, dst);
 
     // cleanup
     src.delete();
     dst.delete();
     rgbaPlanes.delete();
     mergedPlanes.delete();
-    return c;
+    return modifiedCanvas;
 }
 
-image.addEventListener('load', (e) => {
-    let ctx = canvas.getContext('2d');
-    ctx.drawImage(image, 0, 0, 300, 300);
-});
+let resolver;
+let executor = (resolve, reject) => {
 
-input.addEventListener(
-    'change',
-    (e) => {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                image.src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    },
-    false
-);
+    resolver = resolve;
+    console.log("resolver is", resolver);
+};
 
-
-
-
+let onOpenCvLoad;
 function openCvReady() {
-    console.log("OpenCV.js is ready");
+    onOpenCvLoad();
+}
 
-    button.addEventListener('click', (e) => {
-        try {
-            //grayScale();
-            //threshold();
-            //opening();
-            //closing();
-            //openClose();
-            //openCloseBounding();
 
-            //convexHull();
-            //boundingRect();
-            let c = charles();
-            contours(c);
-        } catch (e) {
-            console.error(e);
+
+export async function getVertices(canvas) {
+    await new Promise((resolve, reject) => {
+        onOpenCvLoad = () => {
+            resolve();
         }
     });
+    try {
+        let c = charles(canvas);
+        let vertices = contours(c);
+        return vertices;
+    } catch (e) {
+        console.error(e);
+    }
 }
 
-var Module = {
+window.Module = {
     onRuntimeInitialized() { openCvReady(); }
 };
+

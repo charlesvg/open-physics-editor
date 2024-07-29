@@ -1,3 +1,5 @@
+import * as opencv from "./opencv.mjs";
+
 var stage = new Konva.Stage({
     container: 'container',   // id of container <div>
     width: 500,
@@ -16,7 +18,7 @@ let loadImage = (url) => {
         }
     })
 }
-let imageObj = await loadImage('http://www.lunapic.com/editor/premade/transparent.gif');
+let imageObj = await loadImage('penguin.gif');
 var yoda = new Konva.Image({
     x: 50,
     y: 50,
@@ -29,7 +31,8 @@ layer.add(yoda);
 
 
 
-var layer = new Konva.Layer();
+
+// var layer = new Konva.Layer();
 
 var text = new Konva.Text({
     x: 10,
@@ -112,3 +115,18 @@ window.addEventListener('resize', function () {
     layer.canvas.setPixelRatio(Konva.pixelRatio);
     layer.draw();
 })
+
+let vertices = await opencv.getVertices(layer.getNativeCanvasElement());
+for (let vertex of vertices) {
+    let circle = new Konva.Circle({
+        x: vertex.x,
+        y: vertex.y,
+        radius: 3,
+        fill: 'red',
+        stroke: 'black',
+        strokeWidth: 2,
+        draggable:true
+    });
+    layer.add(circle);
+}
+layer.draw();
