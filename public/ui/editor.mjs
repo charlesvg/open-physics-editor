@@ -13,7 +13,7 @@ let loadImage = (url) => {
     let imageObj = new Image();
     imageObj.src = url;
     return new Promise((resolve, reject) => {
-        imageObj.onload  = () => {
+        imageObj.onload = () => {
             resolve(imageObj);
         }
     })
@@ -28,8 +28,6 @@ var yoda = new Konva.Image({
 });
 
 layer.add(yoda);
-
-
 
 
 // var layer = new Konva.Layer();
@@ -59,6 +57,7 @@ stage.on('pointerdown', function () {
 });
 
 let circles = [];
+
 function addCircle() {
     let pointerPos = stage.getPointerPosition();
     let circle = new Konva.Circle({
@@ -68,7 +67,7 @@ function addCircle() {
         fill: 'red',
         stroke: 'black',
         strokeWidth: 2,
-        draggable:true
+        draggable: true
     });
     if (circles.length > 0) {
         let lastCircle = circles[circles.length - 1];
@@ -94,7 +93,6 @@ function addCircle() {
     }
 
 
-
     circles.push(circle);
     layer.add(circle);
 }
@@ -116,17 +114,30 @@ window.addEventListener('resize', function () {
     layer.draw();
 })
 
-let vertices = await opencv.getVertices(layer.getNativeCanvasElement());
-for (let vertex of vertices) {
-    let circle = new Konva.Circle({
-        x: vertex.x,
-        y: vertex.y,
-        radius: 3,
-        fill: 'red',
-        stroke: 'black',
-        strokeWidth: 2,
-        draggable:true
-    });
-    layer.add(circle);
+let contours = await opencv.getVertices(layer.getNativeCanvasElement());
+for (let contour of contours) {
+    let lastVertex = contour[contour.length - 1];
+    for (let vertex of contour) {
+        let circle = new Konva.Circle({
+            x: vertex.x,
+            y: vertex.y,
+            radius: 3,
+            fill: 'red',
+            stroke: 'black',
+            strokeWidth: 2,
+            draggable: true
+        });
+        const line = new Konva.Line({
+            points: [lastVertex.x, lastVertex.y, vertex.x, vertex.y],
+            stroke: 'red',
+            strokeWidth: 1,
+            lineCap: 'round',
+            lineJoin: 'round',
+        });
+        layer.add(line);
+        lastVertex = vertex;
+        layer.add(circle);
+    }
 }
+
 layer.draw();
