@@ -1,4 +1,4 @@
-const DEBUG_OPENCV = false;
+const DEBUG_OPENCV = true;
 function createCanvas() {
     let c = document.createElement('canvas');
     let container = document.getElementById('container');
@@ -158,7 +158,7 @@ export async function getVertices(canvas) {
 // and https://forum.opencv.org/t/opencv-js-built-file-not-working/14866/2
 // and https://docs.opencv.org/4.x/d0/d84/tutorial_js_usage.html
 const openCvScript = document.createElement('script');
-openCvScript.src = './opencv.js';
+openCvScript.src = './libs/opencv.js';
 openCvScript.async = true;
 openCvScript.onload = () => {
     cv['onRuntimeInitialized'] = () => {

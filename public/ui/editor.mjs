@@ -1,4 +1,4 @@
-import * as opencv from "./opencv.mjs";
+import * as opencv from "../polygon-detection/opencv.mjs";
 
 var stage = new Konva.Stage({
     container: 'container',   // id of container <div>
@@ -18,7 +18,7 @@ let loadImage = (url) => {
         }
     })
 }
-let imageObj = await loadImage('penguin.gif');
+let imageObj = await loadImage('./assets/penguin.gif');
 var yoda = new Konva.Image({
     x: 50,
     y: 50,
@@ -117,7 +117,6 @@ window.addEventListener('resize', function () {
 })
 
 let vertices = await opencv.getVertices(layer.getNativeCanvasElement());
-console.log('vertices', vertices);
 for (let vertex of vertices) {
     let circle = new Konva.Circle({
         x: vertex.x,
