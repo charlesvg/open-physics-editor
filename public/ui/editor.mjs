@@ -18,7 +18,7 @@ let loadImage = (url) => {
         }
     })
 }
-let imageObj = await loadImage('./assets/penguin.gif');
+let imageObj = await loadImage('./assets/turret-shoot-fire.png');
 var yoda = new Konva.Image({
     x: 50,
     y: 50,
@@ -55,6 +55,9 @@ stage.on('pointermove', function () {
 stage.on('pointerdown', function () {
     addCircle();
 });
+
+
+
 
 let circles = [];
 
@@ -114,8 +117,19 @@ window.addEventListener('resize', function () {
     layer.draw();
 })
 
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
 let contours = await opencv.getVertices(layer.getNativeCanvasElement());
+
 for (let contour of contours) {
+    let color = getRandomColor();
     let lastVertex = contour[contour.length - 1];
     for (let vertex of contour) {
         let circle = new Konva.Circle({
@@ -123,13 +137,13 @@ for (let contour of contours) {
             y: vertex.y,
             radius: 3,
             fill: 'red',
-            stroke: 'black',
+            stroke: color,
             strokeWidth: 2,
             draggable: true
         });
         const line = new Konva.Line({
             points: [lastVertex.x, lastVertex.y, vertex.x, vertex.y],
-            stroke: 'red',
+            stroke: color,
             strokeWidth: 1,
             lineCap: 'round',
             lineJoin: 'round',

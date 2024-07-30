@@ -50,7 +50,7 @@ function contours(src) {
         let tmp = new cv.Mat();
         let cnt = contours.get(i);
         // You can try more different parameters
-        cv.approxPolyDP(cnt, tmp, 5, true);
+        cv.approxPolyDP(cnt, tmp, 1, true);
         vertices.push(getVerts(tmp));
         poly.push_back(tmp);
         cnt.delete();
