@@ -6,8 +6,10 @@ var stage = new Konva.Stage({
     height: 500
 });
 
-var layer = new Konva.Layer();
-stage.add(layer);
+const imageLayer = new Konva.Layer();
+const overlayLayer = new Konva.Layer();
+stage.add(imageLayer);
+stage.add(overlayLayer);
 
 let loadImage = (url) => {
     let imageObj = new Image();
@@ -19,7 +21,7 @@ let loadImage = (url) => {
     })
 }
 let imageObj = await loadImage('./assets/turret-shoot-fire.png');
-var yoda = new Konva.Image({
+var image = new Konva.Image({
     x: 50,
     y: 50,
     image: imageObj,
@@ -27,7 +29,7 @@ var yoda = new Konva.Image({
     height: 300,
 });
 
-layer.add(yoda);
+imageLayer.add(image);
 
 
 // var layer = new Konva.Layer();
@@ -90,31 +92,33 @@ function addCircle() {
             lineJoin: 'round',
         });
 
-        layer.add(backLine);
-        layer.add(frontLine);
-        layer.draw();
+        overlayLayer.add(backLine);
+        overlayLayer.add(frontLine);
+        overlayLayer.draw();
     }
 
 
     circles.push(circle);
-    layer.add(circle);
+    overlayLayer.add(circle);
 }
 
 
-layer.add(text);
+overlayLayer.add(text);
 
-// add the layer to the stage
-stage.add(layer);
+imageLayer.draw();
+overlayLayer.draw();
 
-layer.draw();
 
 
 // This fixes konva shapes becoming blurry after a zoom
 window.addEventListener('resize', function () {
     Konva.pixelRatio = window.devicePixelRatio;
     // update pixel ratio of existing canvas
-    layer.canvas.setPixelRatio(Konva.pixelRatio);
-    layer.draw();
+    imageLayer.canvas.setPixelRatio(Konva.pixelRatio);
+    imageLayer.draw();
+
+    overlayLayer.canvas.setPixelRatio(Konva.pixelRatio);
+    overlayLayer.draw();
 })
 
 function getRandomColor() {
@@ -126,7 +130,7 @@ function getRandomColor() {
     return color;
 }
 
-let contours = await opencv.getVertices(layer.getNativeCanvasElement());
+let contours = await opencv.getVertices(imageLayer.getNativeCanvasElement());
 
 for (let contour of contours) {
     let color = getRandomColor();
@@ -148,10 +152,10 @@ for (let contour of contours) {
             lineCap: 'round',
             lineJoin: 'round',
         });
-        layer.add(line);
+        overlayLayer.add(line);
         lastVertex = vertex;
-        layer.add(circle);
+        overlayLayer.add(circle);
     }
 }
 
-layer.draw();
+overlayLayer.draw();
