@@ -1,4 +1,4 @@
-const DEBUG_OPENCV = false;
+const DEBUG_OPENCV = true;
 
 function createCanvas() {
     let c = document.createElement('canvas');
@@ -50,7 +50,7 @@ function contours(src) {
         let tmp = new cv.Mat();
         let cnt = contours.get(i);
         // You can try more different parameters
-        cv.approxPolyDP(cnt, tmp, 1, true);
+        cv.approxPolyDP(cnt, tmp, 10, true);
         vertices.push(getVerts(tmp));
         poly.push_back(tmp);
         cnt.delete();

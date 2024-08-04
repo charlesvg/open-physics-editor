@@ -6,7 +6,7 @@ var stage = new Konva.Stage({
     height: 500
 });
 
-const imageLayer = new Konva.Layer();
+const imageLayer = new Konva.Layer({draggable:true});
 const overlayLayer = new Konva.Layer();
 stage.add(imageLayer);
 stage.add(overlayLayer);
@@ -40,7 +40,7 @@ var text = new Konva.Text({
     fontFamily: 'Calibri',
     fontSize: 24,
     text: '',
-    fill: 'black',
+    fill: 'white',
 });
 
 function writeMessage(message) {
@@ -48,18 +48,33 @@ function writeMessage(message) {
 }
 
 stage.on('pointermove', function () {
-    var pointerPos = stage.getPointerPosition();
-    var x = pointerPos.x - 190;
-    var y = pointerPos.y - 40;
-    writeMessage('x: ' + x + ', y: ' + y);
+    const pointerPos = stage.getPointerPosition();
+    const x = Math.round(pointerPos.x);
+    const y = Math.round(pointerPos.y);
+    let relativeX = Math.round(x - imageLayer.x());
+    let relativeY = Math.round(y - imageLayer.y());
+    writeMessage('x: ' + relativeX + ', y: ' + relativeY);
 });
 
 stage.on('pointerdown', function () {
-    addCircle();
+    // addCircle();
 });
 
+class ContourPoint {
+    #circle;
+    #prevLine;
+    #nextCircle;
 
 
+
+
+}
+class Contour {
+    #points;
+    constructor(points) {
+        this.#points = points;
+    }
+}
 
 let circles = [];
 
@@ -152,10 +167,73 @@ for (let contour of contours) {
             lineCap: 'round',
             lineJoin: 'round',
         });
-        overlayLayer.add(line);
+        imageLayer.add(line);
         lastVertex = vertex;
-        overlayLayer.add(circle);
+        imageLayer.add(circle);
     }
 }
 
 overlayLayer.draw();
+
+const doZoom = (layer) => {
+
+    var scaleBy = 1.2;
+    layer.on('wheel', (e) => {
+        // stop default scrolling
+        e.evt.preventDefault();
+
+        var oldScale = layer.scaleX();
+        var pointer = stage.getPointerPosition();
+
+        var mousePointTo = {
+            x: (pointer.x - layer.x()) / oldScale,
+            y: (pointer.y - layer.y()) / oldScale,
+        };
+
+        // how to scale? Zoom in? Or zoom out?
+        let direction = e.evt.deltaY > 0 ? 1 : -1;
+
+        // when we zoom on trackpad, e.evt.ctrlKey is true
+        // in that case lets revert direction
+        if (e.evt.ctrlKey) {
+            direction = -direction;
+        }
+
+        var newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
+        layer.scale({ x: newScale, y: newScale });
+
+        var newPos = {
+            x: pointer.x - mousePointTo.x * newScale,
+            y: pointer.y - mousePointTo.y * newScale,
+        };
+        layer.position(newPos);
+    });
+}
+
+doZoom(imageLayer);
+
+
+const sceneWidth = stage.attrs.width;
+const sceneHeight = stage.attrs.height;
+function fitStageIntoParentContainer() {
+    var container = document.querySelector('#container');
+    container.style.width= '100%';
+    container.style.height= '100%';
+
+    // now we need to fit stage into parent container
+    var containerWidth = container.offsetWidth;
+    var containerHeight = container.offsetHeight;
+
+    // but we also make the full scene visible
+    // so we need to scale all objects on canvas
+    // var scale = containerWidth / sceneWidth;
+
+    stage.width(containerWidth );
+    stage.height(containerHeight );
+    // stage.scale({ x: scale, y: scale });
+}
+
+fitStageIntoParentContainer();
+// adapt the stage on any window resize
+window.addEventListener('resize', fitStageIntoParentContainer);
