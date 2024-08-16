@@ -1,7 +1,7 @@
 import * as opencv from "../polygon-detection/opencv.mjs";
 
 var stage = new Konva.Stage({
-    container: 'container',   // id of container <div>
+    container: 'kontainer',   // id of container <div>
     width: 500,
     height: 500
 });
@@ -217,7 +217,7 @@ doZoom(imageLayer);
 const sceneWidth = stage.attrs.width;
 const sceneHeight = stage.attrs.height;
 function fitStageIntoParentContainer() {
-    var container = document.querySelector('#container');
+    var container = document.querySelector('#kontainer');
     container.style.width= '100%';
     container.style.height= '100%';
 

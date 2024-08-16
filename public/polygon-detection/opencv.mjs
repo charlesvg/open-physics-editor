@@ -1,8 +1,8 @@
-const DEBUG_OPENCV = true;
+const DEBUG_OPENCV = false;
 
 function createCanvas() {
     let c = document.createElement('canvas');
-    let container = document.getElementById('container');
+    let container = document.getElementById('kontainer');
     c.height = 100;
     c.width = 100;
     container.appendChild(c);
@@ -115,7 +115,7 @@ function createCanvasWithBufferSize(sourceCanvas) {
     // See https://stackoverflow.com/questions/33950724/how-to-avoid-the-zoom-of-browser-changing-the-canvas-size
 
     let c = document.createElement('canvas');
-    let container = document.getElementById('container');
+    let container = document.getElementById('kontainer');
     c.height = sourceCanvas.clientHeight;
     c.width = sourceCanvas.clientWidth;
     c.style.width = sourceCanvas.clientWidth + 'px';
