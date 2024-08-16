@@ -6,65 +6,6 @@
     <title>Centered Canvas with Expanding Vertical Menu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-    <!--    <style>-->
-    <!--        html, body {-->
-    <!--            height: 100%;-->
-    <!--            margin: 0;-->
-    <!--        }-->
-    <!--        body {-->
-    <!--            /*display: flex;*/-->
-    <!--            /*justify-content: center;*/-->
-    <!--            /*align-items: center;*/-->
-    <!--        }-->
-    <!--        .accordion-body {-->
-    <!--            padding: unset;-->
-    <!--        }-->
-    <!--        .dropdown-item {-->
-    <!--            padding: var(&#45;&#45;bs-accordion-btn-padding-y) var(&#45;&#45;bs-accordion-btn-padding-x);-->
-    <!--        }-->
-    <!--        .menu-container {-->
-    <!--            position: fixed;-->
-    <!--            top: 0;-->
-    <!--            right: 0;-->
-    <!--            height: 100%;-->
-    <!--            display: flex;-->
-    <!--            flex-direction: column;-->
-    <!--            justify-content: flex-start;-->
-    <!--            /*padding: 1rem;*/-->
-    <!--            /*background-color: #f8f9fa;*/-->
-    <!--            border-left: 1px solid #ddd;-->
-    <!--            overflow-y: auto;-->
-    <!--            width: 300px;-->
-    <!--        }-->
-    <!--        .container {-->
-    <!--            /*display: flex;*/-->
-    <!--            position: absolute;-->
-    <!--            height: 100vh;-->
-    <!--            width:100%;-->
-    <!--            margin:0;-->
-    <!--            padding: 0;-->
-    <!--            background: red;-->
-    <!--        }-->
-    <!--        .left-column {-->
-    <!--            flex: 1;-->
-    <!--            background-color: #f0f0f0;-->
-    <!--            padding: 20px;-->
-    <!--            box-sizing: border-box;-->
-    <!--        }-->
-    <!--        .right-column {-->
-    <!--            width: 300px;-->
-    <!--            background-color: #ccc;-->
-    <!--            padding: 20px;-->
-    <!--            box-sizing: border-box;-->
-    <!--        }-->
-
-    <!--        .dropdown-item:hover {-->
-    <!--            background-color: #495057; /* Darker background on hover */-->
-    <!--        }-->
-    <!--        canvas {-->
-    <!--            border: 1px solid black;-->
-    <!--        }-->
-    <!--    </style>-->
     <style>
         html,
         body {
@@ -82,27 +23,33 @@
         .left-column {
             flex: 1;
             background-color: #f0f0f0;
-            padding: 20px;
+            /*padding: 20px;*/
             box-sizing: border-box;
         }
         .right-column {
             width: 300px;
             background-color: #ccc;
-            padding: 20px;
+            /*padding: 20px;*/
             box-sizing: border-box;
+        }
+
+        .accordion-body {
+            padding: unset;
+        }
+        .dropdown-item {
+            padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x);
+        }
+        .dropdown-item:hover {
+            background-color: #495057; /* Darker background on hover */
         }
     </style>
 </head>
 <body data-bs-theme="dark">
 <div class="montainer">
     <div class="left-column">
-<!--        <h1>Left Column</h1>-->
-<!--        <p>This column is responsive and takes up as much space as possible.</p>-->
         <div id="kontainer"></div>
     </div>
     <div class="right-column">
-<!--        <h1>Right Column</h1>-->
-<!--        <p>This column has a fixed width of 300px.</p>-->
         <div class="menu-container">
             <div class="accordion accordion-flush" id="menuAccordion">
                 <div class="accordion-item">
@@ -136,47 +83,6 @@
         </div>
     </div>
 </div>
-<!--    <div class="left-column">-->
-<!--        <h1>Left Column</h1>-->
-<!--        <p>This column is responsive and takes up as much space as possible.</p>-->
-<!--    </div>-->
-<!--    <div class="right-column">-->
-<!--        <h1>Right Column</h1>-->
-<!--        <p>This column has a fixed width of 300px.</p>-->
-<!--    </div>-->
-<!--<div class="menu-container left-column">-->
-<!--    <div class="accordion accordion-flush" id="menuAccordion">-->
-<!--        <div class="accordion-item">-->
-<!--            <h2 class="accordion-header" id="headingFile">-->
-<!--                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFile" aria-expanded="true" aria-controls="collapseFile">-->
-<!--                    File-->
-<!--                </button>-->
-<!--            </h2>-->
-<!--            <div id="collapseFile" class="accordion-collapse collapse" aria-labelledby="headingFile">-->
-<!--                <div class="accordion-body">-->
-<!--                    <a class="dropdown-item w-100" href="#">Import</a>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="accordion-item">-->
-<!--            <h2 class="accordion-header" id="headingContours">-->
-<!--                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContours" aria-expanded="false" aria-controls="collapseContours">-->
-<!--                    Contours-->
-<!--                </button>-->
-<!--            </h2>-->
-<!--            <div id="collapseContours" class="accordion-collapse collapse" aria-labelledby="headingContours">-->
-<!--                <div class="accordion-body">-->
-<!--                    <a class="dropdown-item w-100" href="#">One</a>-->
-
-<!--                    <a class="dropdown-item w-100" href="#">Two</a>-->
-<!--                    <a class="dropdown-item w-100" href="#">Three</a>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<div id="container" class="right-column"></div>-->
-
 
 
 <!-- hot reload -->
@@ -187,7 +93,6 @@
 
 <!-- physics editor -->
 <script src="ui/editor.mjs" type="module"></script>
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
