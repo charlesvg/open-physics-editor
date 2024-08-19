@@ -87,12 +87,6 @@ class Contour {
         this.#generateContourPointsFromVertices(vertices);
         this.#drawPoints();
 
-        stage.on('pointermove',  () => {
-            const pointerPos = stage.getPointerPosition();
-            const x = Math.round(pointerPos.x);
-            const y = Math.round(pointerPos.y);
-            this.#onMouseMove(x,y);
-        });
     }
     #onMouseMove(x,y) {
         if (this.#isDragging) {
@@ -135,11 +129,41 @@ class Contour {
         circle.on('dragend', () => {
             this.#onDragEnd(newPoint);
         });
+        circle.on('dragmove', () => {
+            this.#onDragMove(newPoint);
+        });
     }
 
     #onDragEnd(contourPoint) {
         console.log(contourPoint);
+    }
+    #onDragMove(contourPoint) {
+        const pointerPos = stage.getPointerPosition();
+        const x = Math.round(pointerPos.x);
+        const y = Math.round(pointerPos.y);
 
+        let involvedContourPoint;
+        if (this.#points[this.#points.length-1] === contourPoint) {
+            // We're moving the last contourPoint
+            involvedContourPoint = this.#points[0];
+        } else {
+            let elementIndex = this.#points.findIndex((element) => element === contourPoint);
+            involvedContourPoint = this.#points[elementIndex+1];
+        }
+
+        const p1 = contourPoint.frontLine.points();
+        const newPoints1 = [p1[0], p1[1], contourPoint.circle.x(), contourPoint.circle.y()];
+        contourPoint.frontLine.points(newPoints1);
+        contourPoint.backLine.points(newPoints1);
+
+        const p2 = involvedContourPoint.frontLine.points();
+        const newPoints2 = [contourPoint.circle.x(), contourPoint.circle.y(), p2[2], p2[3], ];
+        involvedContourPoint.frontLine.points(newPoints2);
+        involvedContourPoint.backLine.points(newPoints2);
+
+
+
+        console.log(contourPoint);
     }
 
     #addCircle(point) {
