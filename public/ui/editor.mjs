@@ -61,19 +61,122 @@ stage.on('pointerdown', function () {
 });
 
 class ContourPoint {
-    #circle;
-    #prevLine;
-    #nextCircle;
+    circle;
+    frontLine;
+    backLine;
 
 
-
-
-}
-class Contour {
-    #points;
-    constructor(points) {
-        this.#points = points;
+    constructor(circle, frontLine, backLine) {
+        this.circle = circle;
+        this.frontLine = frontLine;
+        this.backLine = backLine;
+        // if (backLine) imageLayer.add(backLine);
+        // if (frontLine) imageLayer.add(frontLine);
+        // imageLayer.add(circle);
+        // imageLayer.draw();
     }
+}
+
+
+class Contour {
+    #points = [];
+    #isDragging = false;
+    #dragLine;
+    #isDraggingLineStart = false;
+    constructor(vertices) {
+        this.#generateContourPointsFromVertices(vertices);
+        this.#drawPoints();
+
+        stage.on('pointermove',  () => {
+            const pointerPos = stage.getPointerPosition();
+            const x = Math.round(pointerPos.x);
+            const y = Math.round(pointerPos.y);
+            this.#onMouseMove(x,y);
+        });
+    }
+    #onMouseMove(x,y) {
+        if (this.#isDragging) {
+            if (this.#isDraggingLineStart) {
+                // this.#dragLine.
+                //https://konvajs.org/docs/select_and_transform/Basic_demo.html
+                // https://stackoverflow.com/questions/72603024/konva-js-get-new-point-positions-for-line-after-dragging-or-scaling
+            }
+        }
+    }
+    #drawPoints() {
+        for (let point of this.#points) {
+            imageLayer.add(point.backLine);
+        }
+        for (let point of this.#points) {
+            imageLayer.add(point.frontLine);
+        }
+        for (let point of this.#points) {
+            imageLayer.add(point.circle);
+        }
+        imageLayer.draw();
+    }
+    #generateContourPointsFromVertices(vertices) {
+            let color = getRandomColor();
+            let lastVertex = vertices[vertices.length - 1];
+            for (let vertex of vertices) {
+                this.addPoint(lastVertex, vertex);
+                lastVertex = vertex;
+        }
+    }
+    addPoint(lastVertex, newVertex) {
+        let circle = this.#addCircle(newVertex);
+        let frontLine = this.#addFrontLine(lastVertex,newVertex);
+        let backLine = this.#addBackLine(lastVertex, newVertex);
+        let newPoint = new ContourPoint(circle, frontLine, backLine);
+        this.#points.push(newPoint);
+        circle.on('dragstart', () => {
+
+        });
+        circle.on('dragend', () => {
+            this.#onDragEnd(newPoint);
+        });
+    }
+
+    #onDragEnd(contourPoint) {
+        console.log(contourPoint);
+
+    }
+
+    #addCircle(point) {
+        return new Konva.Circle({
+            x: point.x,
+            y: point.y,
+            radius: 3,
+            fill: 'red',
+            stroke: 'black',
+            strokeWidth: 2,
+            draggable: true
+        });
+    }
+    #addBackLine(fromVertex, toVertex) {
+        return new Konva.Line({
+            points: [fromVertex.x, fromVertex.y, toVertex.x, toVertex.y],
+            stroke: 'black',
+            strokeWidth: 3,
+            lineCap: 'round',
+            lineJoin: 'round',
+        });
+    }
+    #addFrontLine(fromVertex, toVertex) {
+            return new Konva.Line({
+                points: [fromVertex.x, fromVertex.y, toVertex.x, toVertex.y],
+                stroke: 'white',
+                strokeWidth: 1,
+                lineCap: 'round',
+                lineJoin: 'round',
+            });
+    }
+}
+
+let rawContours = await opencv.getVertices(imageLayer.getNativeCanvasElement());
+let contours = [];
+for (let rawContour of rawContours) {
+    new Contour(rawContour);
 }
 
 let circles = [];
@@ -145,33 +248,7 @@ function getRandomColor() {
     return color;
 }
 
-let contours = await opencv.getVertices(imageLayer.getNativeCanvasElement());
 
-for (let contour of contours) {
-    let color = getRandomColor();
-    let lastVertex = contour[contour.length - 1];
-    for (let vertex of contour) {
-        let circle = new Konva.Circle({
-            x: vertex.x,
-            y: vertex.y,
-            radius: 3,
-            fill: 'red',
-            stroke: color,
-            strokeWidth: 2,
-            draggable: true
-        });
-        const line = new Konva.Line({
-            points: [lastVertex.x, lastVertex.y, vertex.x, vertex.y],
-            stroke: color,
-            strokeWidth: 1,
-            lineCap: 'round',
-            lineJoin: 'round',
-        });
-        imageLayer.add(line);
-        lastVertex = vertex;
-        imageLayer.add(circle);
-    }
-}
 
 overlayLayer.draw();
 
