@@ -20,6 +20,15 @@ app.use(connectLiveReload());
 // })
 app.use(express.static('public'))
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+
+
+// clean exit the server and node process when one of these events occur
+const events = ['exit', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'uncaughtException','SIGTERM'];
+for (let e of events) {
+    process.on(e, () => {
+        server.close(() => process.exit())
+    })
+}
