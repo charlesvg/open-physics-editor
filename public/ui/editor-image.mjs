@@ -1,11 +1,13 @@
-import {drawContours} from "./contour.mjs";
+import {ContourManager} from "./contour-manager.mjs";
 
 export class EditorImage {
     #stage;
     layer;
+    #contourManager;
     constructor(stage) {
         this.#stage = stage;
         this.layer = new Konva.Layer();
+        this.#contourManager = new ContourManager();
 
         stage.add(this.layer);
     }
@@ -33,6 +35,6 @@ export class EditorImage {
     }
 
     async drawContours() {
-        await drawContours(this.#stage, this.layer);
+        await this.#contourManager.drawContours(this.#stage, this.layer);
     }
 }

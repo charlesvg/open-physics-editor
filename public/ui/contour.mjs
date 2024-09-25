@@ -13,7 +13,7 @@ export class Contour {
         this.#stage = stage;
         this.#generateContourPointsFromVertices(vertices);
         this.#drawPoints();
-        this.#drawMenu(vertices);
+        // this.#drawMenu(vertices);
     }
     #drawMenu(vertices) {
         let bounds = polygonBounds(vertices);
@@ -148,9 +148,3 @@ export class Contour {
     }
 }
 
-export async function drawContours(stage, layer) {
-    let rawContours = await opencv.getVertices(layer.getNativeCanvasElement());
-    for (let rawContour of rawContours) {
-        new Contour(stage, layer, rawContour);
-    }
-}

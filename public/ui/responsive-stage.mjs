@@ -5,7 +5,8 @@ export class ResponsiveStage {
         this.#stage = stage;
         this.#fitStageIntoParentContainer();
         // adapt the stage on any window resize
-        window.addEventListener('resize', this.#fitStageIntoParentContainer);
+        window.addEventListener('resize', this.#fitStageIntoParentContainer.bind(this));
+        // window.addEventListener.apply(this, ['resize', this.#fitStageIntoParentContainer]);
     }
 
     #fitStageIntoParentContainer() {

@@ -1,4 +1,4 @@
-export class Zoom {
+export class ZoomableLayer {
     #stage;
     constructor(stage, layer) {
         this.#stage = stage;
