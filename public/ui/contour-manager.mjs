@@ -1,5 +1,6 @@
 import * as opencv from "../polygon-detection/opencv.mjs";
 import {Contour} from "./contour.mjs";
+import {getComponent} from "./framework/components.mjs";
 
 export class ContourManager {
     #contours = [];
@@ -22,20 +23,15 @@ export class ContourManager {
         return deca[Math.floor(n / 10) - 2] + 'y-' + special[n % 10];
     }
 
-    #addContoursToMenu() {
+    async #addContoursToMenu() {
+        let html = '';
         for (let i = 0; i < this.#contours.length; i++) {
-            document.getElementById('contoursContainer').insertAdjacentHTML('beforeend',
-                `
-                        <a class="dropdown-item w-100" href="#">
-                            <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                            <label class="form-check-label" for="flexCheckDefault">
-                                ${this.#numberToOrdinalWord(i+1)}
-                            </label>
-                        </div></a>
-                    `);
+            html += await getComponent('./assets/contours-checkbox.component.html',
+                {
+                    id: 'checkbox-' + i,
+                    name: this.#numberToOrdinalWord(i + 1)
+                });
         }
-
-
+        document.getElementById('contoursContainer').insertAdjacentHTML('beforeend', html);
     }
 }
