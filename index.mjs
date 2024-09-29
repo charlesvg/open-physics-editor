@@ -1,10 +1,12 @@
-const express = require('express')
+import express from "express";
 const app = express()
 const port = 3000
+import open from 'open';
+import livereload from "livereload";
+import connectLiveReload from "connect-livereload";
 
-
-var livereload = require("livereload");
-var connectLiveReload = require("connect-livereload");
+// var livereload = require("livereload");
+// var connectLiveReload = require("connect-livereload");
 
 const liveReloadServer = livereload.createServer();
 liveReloadServer.server.once("connection", () => {
@@ -22,6 +24,7 @@ app.use(express.static('public'))
 
 const server = app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
+    open('http://localhost:3000');
 })
 
 

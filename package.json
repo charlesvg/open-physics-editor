@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "node index.js",
+    "dev": "node index.mjs",
     "mon": "nodemon"
   },
   "dependencies": {
