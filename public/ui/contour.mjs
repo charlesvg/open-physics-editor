@@ -7,13 +7,30 @@ export class Contour {
     #points = [];
     #layer;
     #stage;
+    #isVisible = false;
 
     constructor(stage, layer, vertices) {
         this.#layer = layer;
         this.#stage = stage;
         this.#generateContourPointsFromVertices(vertices);
-        this.#drawPoints();
+        this.draw();
         // this.#drawMenu(vertices);
+    }
+    toggleVisibility() {
+        if (this.#isVisible) {
+            this.hide();
+        } else {
+            this.draw();
+        }
+    }
+    hide() {
+        for (let point of this.#points) {
+            point.backLine.remove();
+            point.frontLine.remove();
+            point.circle.remove();
+        }
+        this.#layer.draw();
+        this.#isVisible = false;
     }
     #drawMenu(vertices) {
         let bounds = polygonBounds(vertices);
@@ -28,7 +45,7 @@ export class Contour {
 
     }
 
-    #drawPoints() {
+    draw() {
         for (let point of this.#points) {
             this.#layer.add(point.backLine);
         }
@@ -39,6 +56,7 @@ export class Contour {
             this.#layer.add(point.circle);
         }
         this.#layer.draw();
+        this.#isVisible = true;
     }
 
     #generateContourPointsFromVertices(vertices) {

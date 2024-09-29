@@ -6,6 +6,16 @@ export async function getComponent(filename, replaceObject) {
     return mustache(body, replaceObject);
 }
 
+export async function rdr(component) {
+    let filename = component.filename;
+    let selector = component.selector;
+    let state = component.state;
+    let html = await getComponent(filename,state);
+    document.querySelector(selector).insertAdjacentHTML('beforeend', html);
+}
+export function cbk(selector, eventType, callback ) {
+    document.querySelector(selector).addEventListener(eventType, callback);
+}
 
 // From https://gist.github.com/jimeh/332765
 const mustache = (string, data) => {

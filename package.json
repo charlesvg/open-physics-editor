@@ -4,7 +4,8 @@
     "mon": "nodemon"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "jquery": "^3.7.1"
   },
   "devDependencies": {
     "connect-livereload": "^0.6.1",

@@ -1,6 +1,6 @@
 import * as opencv from "../polygon-detection/opencv.mjs";
 import {Contour} from "./contour.mjs";
-import {getComponent} from "./framework/components.mjs";
+import {cbk, getComponent, rdr} from "./framework/components.mjs";
 
 export class ContourManager {
     #contours = [];
@@ -11,7 +11,7 @@ export class ContourManager {
         for (let rawContour of rawContours) {
             this.#contours.push(new Contour(stage, layer, rawContour));
         }
-        this.#addContoursToMenu();
+        await this.#addContoursToMenu();
     }
 
     #numberToOrdinalWord(n) {
@@ -23,15 +23,36 @@ export class ContourManager {
         return deca[Math.floor(n / 10) - 2] + 'y-' + special[n % 10];
     }
 
+    #capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     async #addContoursToMenu() {
         let html = '';
         for (let i = 0; i < this.#contours.length; i++) {
-            html += await getComponent('./assets/contours-checkbox.component.html',
-                {
-                    id: 'checkbox-' + i,
-                    name: this.#numberToOrdinalWord(i + 1)
-                });
+            let name = this.#capitalizeFirstLetter(this.#numberToOrdinalWord(i + 1));
+            await rdr({
+                filename:'./assets/contours-checkbox.component.html',
+                selector: '#contoursContainer',
+                state: {
+                    checkboxId:'checkbox-' + i,
+                    anchorId: 'anchor-checkbox-' + i,
+                    name: name
+                }
+            });
+            $('#checkbox-'+ i).on('click', (e) => {
+                console.log('checkbox clicked', i);
+                this.#contours[i].toggleVisibility();
+
+                let cb = $(`#anchor-checkbox-${i}`).find(":checkbox")[0];
+                if(e.target !== cb) cb.checked = !cb.checked;
+
+            });
+
+            // cbk('#anchor-checkbox-' + i,'click', e => {
+            //     console.log('checkbox clicked', i);
+            //     this.#contours[i].toggleVisibility();
+            // })
         }
-        document.getElementById('contoursContainer').insertAdjacentHTML('beforeend', html);
     }
 }
