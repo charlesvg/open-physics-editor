@@ -9,7 +9,7 @@ var stage = new Konva.Stage({
 const imageLayer = new Konva.Layer({draggable: true});
 
 const editorStage = new EditorStage(stage);
-await editorStage.image.drawContours();
+// await editorStage.image.drawContours();
 
 
 // This fixes konva shapes becoming blurry after a zoom

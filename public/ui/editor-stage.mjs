@@ -13,7 +13,7 @@ export class EditorStage {
         this.stage = stage;
         this.overlay = new Overlay(stage);
         this.image = new EditorImage(stage);
-        this.image.load();
+
         this.drag = new DraggingLayer(stage, this.image.layer);
 
         // const self = this;

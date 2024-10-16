@@ -110,6 +110,7 @@ function extractVertices(canvas) {
 }
 
 let onOpenCvInitialized;
+let isOpenCvInitialized = false;
 
 function createCanvasWithBufferSize(sourceCanvas) {
     // See https://stackoverflow.com/questions/33950724/how-to-avoid-the-zoom-of-browser-changing-the-canvas-size
@@ -120,7 +121,7 @@ function createCanvasWithBufferSize(sourceCanvas) {
     c.width = sourceCanvas.clientWidth;
     c.style.width = sourceCanvas.clientWidth + 'px';
     c.style.height = sourceCanvas.clientHeight + 'px';
-    c.style.display = 'none';
+    // c.style.display = 'none';
     container.appendChild(c);
 
     let destCtx = c.getContext('2d');
@@ -129,13 +130,15 @@ function createCanvasWithBufferSize(sourceCanvas) {
 }
 
 export async function getVertices(canvas) {
-    await new Promise((resolve, reject) => {
-        onOpenCvInitialized = () => {
-            resolve();
-        }
-    });
+    if (!isOpenCvInitialized) {
+        await new Promise((resolve, reject) => {
+            onOpenCvInitialized = () => {
+                isOpenCvInitialized = true;
+                resolve();
+            }
+        });
+    }
     try {
-
         let tempCanvas = createCanvasWithBufferSize(canvas);
         let vertices = extractVertices(tempCanvas);
         tempCanvas.remove();

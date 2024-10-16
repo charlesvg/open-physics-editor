@@ -5,6 +5,12 @@ import {cbk, getComponent, rdr} from "./framework/components.mjs";
 export class ContourManager {
     #contours = [];
 
+    clearContours() {
+        for (let contour of this.#contours) {
+            contour.hide();
+        }
+    }
+
     async drawContours(stage, layer) {
         let rawContours = await opencv.getVertices(layer.getNativeCanvasElement());
         this.#contours = [];
@@ -29,6 +35,7 @@ export class ContourManager {
 
     async #addContoursToMenu() {
         let html = '';
+        $('#contoursContainer').empty();
         for (let i = 0; i < this.#contours.length; i++) {
             let name = this.#capitalizeFirstLetter(this.#numberToOrdinalWord(i + 1));
             await rdr({

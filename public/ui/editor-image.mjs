@@ -4,15 +4,21 @@ export class EditorImage {
     #stage;
     layer;
     #contourManager;
+    #image;
     constructor(stage) {
         this.#stage = stage;
         this.layer = new Konva.Layer();
         this.#contourManager = new ContourManager();
 
         stage.add(this.layer);
+        this.load('./assets/turret-shoot-fire.png').then(()=> {
+            setTimeout(() => {
+                this.load('./assets/penguin.gif');
+            },5000);
+        });
     }
 
-    async load() {
+    async load(url) {
         let loadImage = (url) => {
             let imageObj = new Image();
             imageObj.src = url;
@@ -22,8 +28,13 @@ export class EditorImage {
                 }
             })
         }
-        let imageObj = await loadImage('./assets/turret-shoot-fire.png');
-        const image = new Konva.Image({
+        let imageObj = await loadImage(url);
+        if (this.#image) {
+            this.#image.remove();
+            this.#contourManager.clearContours();
+            this.layer.draw();
+        }
+        this.#image = new Konva.Image({
             x: 50,
             y: 50,
             image: imageObj,
@@ -31,7 +42,10 @@ export class EditorImage {
             height: 300,
         });
 
-        this.layer.add(image);
+        this.layer.add(this.#image);
+        this.layer.draw();
+        await this.drawContours();
+
     }
 
     async drawContours() {
