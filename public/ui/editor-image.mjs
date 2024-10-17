@@ -18,6 +18,11 @@ export class EditorImage {
     }
 
     async load(url) {
+        this.layer.position({
+            x: 0,
+            y: 0
+        });
+        this.layer.scale({ x: 1, y: 1 });
         let loadImage = (url) => {
             let imageObj = new Image();
             imageObj.src = url;

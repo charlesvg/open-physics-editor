@@ -141,7 +141,7 @@ export async function getVertices(canvas) {
     try {
         let tempCanvas = createCanvasWithBufferSize(canvas);
         let vertices = extractVertices(tempCanvas);
-        tempCanvas.remove();
+        // tempCanvas.remove();
         return vertices;
     } catch (e) {
         console.error(e);
