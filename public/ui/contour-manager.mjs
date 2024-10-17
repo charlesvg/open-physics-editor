@@ -52,7 +52,7 @@ export class ContourManager {
                 this.#contours[i].toggleVisibility();
 
                 let cb = $(`#anchor-checkbox-${i}`).find(":checkbox")[0];
-                if(e.target !== cb) cb.checked = !cb.checked;
+                // if(e.target !== cb) cb.checked = !cb.checked;
 
             });
 

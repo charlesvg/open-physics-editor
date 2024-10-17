@@ -1,4 +1,5 @@
 import {ContourManager} from "./contour-manager.mjs";
+import {registerImportFile} from "./import.mjs";
 
 export class EditorImage {
     #stage;
@@ -11,11 +12,9 @@ export class EditorImage {
         this.#contourManager = new ContourManager();
 
         stage.add(this.layer);
-        this.load('./assets/turret-shoot-fire.png').then(()=> {
-            setTimeout(() => {
-                this.load('./assets/penguin.gif');
-            },5000);
-        });
+        this.load('./assets/turret-shoot-fire.png');
+        registerImportFile(this.load.bind(this));
+
     }
 
     async load(url) {
