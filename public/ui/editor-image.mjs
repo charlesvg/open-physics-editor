@@ -39,11 +39,11 @@ export class EditorImage {
             this.layer.draw();
         }
         this.#image = new Konva.Image({
-            x: 50,
-            y: 50,
+            x: 0,
+            y: 0,
             image: imageObj,
-            width: 300,
-            height: 300,
+            // width: 300,
+            // height: 300,
         });
 
         this.layer.add(this.#image);

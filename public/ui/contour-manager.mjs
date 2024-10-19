@@ -15,7 +15,9 @@ export class ContourManager {
         let rawContours = await opencv.getVertices(layer.getNativeCanvasElement());
         this.#contours = [];
         for (let rawContour of rawContours) {
-            this.#contours.push(new Contour(stage, layer, rawContour));
+            const contour = new Contour(stage, layer, rawContour)
+            this.#contours.push(contour);
+            contour.print();
         }
         await this.#addContoursToMenu();
     }

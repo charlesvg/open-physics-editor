@@ -8,6 +8,7 @@ export class Contour {
     #layer;
     #stage;
     #isVisible = false;
+    #vertices;
 
     constructor(stage, layer, vertices) {
         this.#layer = layer;
@@ -15,6 +16,14 @@ export class Contour {
         this.#generateContourPointsFromVertices(vertices);
         this.draw();
         // this.#drawMenu(vertices);
+        this.#vertices = vertices;
+    }
+    print() {
+        const v = [];
+        for (let vertex of this.#vertices) {
+            v.push({x: vertex.x, y: vertex.y });
+        }
+        console.log(JSON.stringify(v, null , 2));
     }
     toggleVisibility() {
         if (this.#isVisible) {
