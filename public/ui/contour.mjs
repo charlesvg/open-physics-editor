@@ -9,21 +9,71 @@ export class Contour {
     #stage;
     #isVisible = false;
     #vertices;
+    #size;
 
-    constructor(stage, layer, vertices) {
+    constructor(stage, layer, vertices, size) {
         this.#layer = layer;
         this.#stage = stage;
         this.#generateContourPointsFromVertices(vertices);
         this.draw();
         // this.#drawMenu(vertices);
         this.#vertices = vertices;
+
+        const centroid = this.#get_polygon_centroid(vertices);
+        this.#layer.add(new Konva.Circle({
+            x: centroid.x,
+            y: centroid.y,
+            radius: 5,
+            fill: 'yellow',
+            stroke: 'green',
+            strokeWidth: 2,
+            draggable: true
+        }));
+
+
+
+        this.#layer.add(new Konva.Circle({
+            x: size.width /2,
+            y: size.height /2,
+            radius: 5,
+            fill: 'yellow',
+            stroke: 'cyan',
+            strokeWidth: 2,
+            draggable: true
+        }));
+
+        this.#size = size;
     }
+
+    #get_polygon_centroid(pts) {
+        var first = pts[0], last = pts[pts.length-1];
+        if (first.x != last.x || first.y != last.y) pts.push(first);
+        var twicearea=0,
+            x=0, y=0,
+            nPts = pts.length,
+            p1, p2, f;
+        for ( var i=0, j=nPts-1 ; i<nPts ; j=i++ ) {
+            p1 = pts[i]; p2 = pts[j];
+            f = p1.x*p2.y - p2.x*p1.y;
+            twicearea += f;
+            x += ( p1.x + p2.x ) * f;
+            y += ( p1.y + p2.y ) * f;
+        }
+        f = twicearea * 3;
+        return { x:x/f, y:y/f };
+    }
+
     print() {
         const v = [];
         for (let vertex of this.#vertices) {
             v.push({x: vertex.x, y: vertex.y });
         }
         console.log(JSON.stringify(v, null , 2));
+
+        const centroid = this.#get_polygon_centroid(this.#vertices);
+        const center = {x: this.#size.width / 2, y: this.#size.height / 2};
+
+        console.log('x', center.x - centroid.x,'y', center.y - centroid.y);
     }
     toggleVisibility() {
         if (this.#isVisible) {

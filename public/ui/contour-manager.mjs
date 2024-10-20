@@ -11,11 +11,11 @@ export class ContourManager {
         }
     }
 
-    async drawContours(stage, layer) {
+    async drawContours(stage, layer, size) {
         let rawContours = await opencv.getVertices(layer.getNativeCanvasElement());
         this.#contours = [];
         for (let rawContour of rawContours) {
-            const contour = new Contour(stage, layer, rawContour)
+            const contour = new Contour(stage, layer, rawContour, size)
             this.#contours.push(contour);
             contour.print();
         }

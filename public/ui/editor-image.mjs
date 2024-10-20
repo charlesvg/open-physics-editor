@@ -47,12 +47,14 @@ export class EditorImage {
         });
 
         this.layer.add(this.#image);
+
+        const imageSize = this.#image.size();
         this.layer.draw();
-        await this.drawContours();
+        await this.drawContours(imageSize);
 
     }
 
-    async drawContours() {
-        await this.#contourManager.drawContours(this.#stage, this.layer);
+    async drawContours(imageSize) {
+        await this.#contourManager.drawContours(this.#stage, this.layer, imageSize);
     }
 }
