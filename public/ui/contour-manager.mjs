@@ -15,9 +15,8 @@ export class ContourManager {
         let rawContours = await opencv.getVertices(layer.getNativeCanvasElement());
         this.#contours = [];
         for (let rawContour of rawContours) {
-            const contour = new Contour(stage, layer, rawContour, size)
-            this.#contours.push(contour);
-            contour.print();
+            this.#contours.push(new Contour(stage, layer, rawContour, size));
+            // contour.print();
         }
         await this.#addContoursToMenu();
     }
@@ -45,18 +44,27 @@ export class ContourManager {
                 selector: '#contoursContainer',
                 state: {
                     checkboxId:'checkbox-' + i,
+                    copyButtonId: 'copyButton-' + i,
                     anchorId: 'anchor-checkbox-' + i,
                     name: name
                 }
             });
             $('#checkbox-'+ i).on('click', (e) => {
-                console.log('checkbox clicked', i);
                 this.#contours[i].toggleVisibility();
-
-                let cb = $(`#anchor-checkbox-${i}`).find(":checkbox")[0];
-                // if(e.target !== cb) cb.checked = !cb.checked;
-
             });
+
+            $('#copyButton-'+ i).on('click', (e) => {
+                const contour = this.#contours[i];
+                const output = contour.print();
+
+                try {
+                    navigator.clipboard.writeText(output);
+                } catch (error) {
+                    console.error(error.message);
+                }
+            });
+
+
 
             // cbk('#anchor-checkbox-' + i,'click', e => {
             //     console.log('checkbox clicked', i);

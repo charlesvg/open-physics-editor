@@ -6,10 +6,41 @@
 <!--        </label>-->
 <!--    </div>-->
 <!--</a>-->
-<div class="w-100">
-        <label class="form-check form-check-label dropdown-item"  for="{{checkboxId}}">
-            <input class="form-check-input" type="checkbox" checked value="" id="{{checkboxId}}" style="margin-left: 0"><span style="padding-left: 10px;">{{name}}</span>
-        </label>
+<div class="w-100" style="display: flex; align-items: center;">
+    <label class="form-check form-check-label dropdown-item" for="{{checkboxId}}" style="flex-grow: 1; display: flex; align-items: center;">
+        <input class="form-check-input" type="checkbox" checked value="" id="{{checkboxId}}" style="margin-left: 0; margin-bottom: 5px;">
+        <span style="padding-left: 10px;">{{name}}</span>
+    </label>
+    <div class="input-group" style="width: auto; margin-left: 20px; margin-right: 20px;">
+        <button type="button" class="btn btn-light" id="{{copyButtonId}}" onclick="{
+                this.classList.remove('btn-light');
+                this.classList.add('btn-success');
+                this.innerHTML = '<i class=\'fa fa-check\'></i>'; // Change icon to checkmark
+
+                setTimeout(() => {
+                this.classList.remove('btn-success');
+                this.classList.add('btn-light');
+                this.innerHTML = '<i class=\'fa fa-clipboard\'></i>'; // Revert to clipboard icon
+                }, 750); // Revert back after 2 seconds
+            }">
+            <i class="fa fa-clipboard"></i>
+        </button>
+    </div>
 </div>
+
+
+<script>
+    function showFeedback(button) {
+        button.classList.remove('btn-light');
+        button.classList.add('btn-success');
+        button.innerHTML = '<i class="fa fa-check"></i>'; // Change icon to checkmark
+
+        setTimeout(() => {
+            button.classList.remove('btn-success');
+            button.classList.add('btn-light');
+            button.innerHTML = '<i class="fa fa-clipboard"></i>'; // Revert to clipboard icon
+        }, 2000); // Revert back after 2 seconds
+    }
+</script>
 
 <!--https://stackoverflow.com/questions/2123/how-do-i-make-a-checkbox-toggle-from-clicking-on-the-text-label-as-well-->
