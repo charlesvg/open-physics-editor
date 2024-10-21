@@ -5,10 +5,16 @@ import open from 'open';
 import livereload from "livereload";
 import connectLiveReload from "connect-livereload";
 
-// var livereload = require("livereload");
-// var connectLiveReload = require("connect-livereload");
 
-const liveReloadServer = livereload.createServer();
+const liveReloadServer = livereload.createServer({exts:['mjs','html'], debug: true});
+liveReloadServer.watch("./**");
+
+liveReloadServer.debug = (message) => {
+    if (message.indexOf("Reloading") > -1) {
+        console.log(message);
+    }
+}
+
 liveReloadServer.server.once("connection", () => {
     setTimeout(() => {
         liveReloadServer.refresh("/");
@@ -17,13 +23,11 @@ liveReloadServer.server.once("connection", () => {
 
 app.use(connectLiveReload());
 
-// app.get('/', (req, res) => {
-//     res.send('Hello World!')
-// })
+
 app.use(express.static('public'))
 
 const server = app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`App listening on port ${port}`)
     open('http://localhost:3000');
 })
 
